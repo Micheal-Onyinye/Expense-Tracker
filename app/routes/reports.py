@@ -34,20 +34,23 @@ def daily_summary(
 ):
 
     results = db.query(
-        Expense.date,
+        func.date(Expense.date).label("date"),
+        Expense.category,
         func.sum(Expense.amount).label("total")
     ).filter(
         Expense.user_id == current_user.id
     ).group_by(
-        Expense.date
+        func.date(Expense.date),
+        Expense.category
     ).order_by(
-        Expense.date
+        func.date(Expense.date) 
     ).all()
 
     return [
         {
             "date": r.date,
-            "total": r.total
+            "category": r.category,
+            "amount": r.total,
         }
         for r in results
     ]
