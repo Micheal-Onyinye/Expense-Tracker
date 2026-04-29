@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Dashboard</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+    <h2>Expense Dashboard</h2>
+    <button class="small-btn" onclick="logout()">Logout</button>
+  </div>
+
+
+  <div class="card-box">
+    <h3>Add Expense</h3>
+
+    <input id="amount" type="number" placeholder="Amount">
+    <input id="category" placeholder="Category">
+    <input id="description" placeholder="Description">
+
+    <button onclick="handleAddExpense()">Add Expense</button>
+  </div>
+
+ 
+  <div class="card-box">
+    <h3>My Expenses</h3>
+
+    <button onclick="loadExpenses()">Refresh</button>
+
+    <div id="expenseList"></div>
+  </div>
+
+ 
+
+
+    <div class="card-box">
+      <h3>Reports</h3>
+
+      <button onclick="loadTotal()">Total Expense</button>
+      <div id="totalReport" class="report-box hidden"></div>
+
+      <button onclick="loadDaily()">Daily Summary</button>
+      <div id="dailyReport" class="report-box hidden"></div>
+
+      <button onclick="loadMonthly()">Monthly Reports</button>
+      <div id="monthlyReport" class="report-box hidden"></div>
+
+  </div>  
+
+
+
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/dashboard.js"></script>
+
+</body>
+</html>

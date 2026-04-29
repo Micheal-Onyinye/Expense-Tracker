@@ -3,3 +3,4 @@ venv
 __pycache__/
 alembic/versions/
 alembic.ini
+draft.md

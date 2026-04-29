@@ -30,6 +30,6 @@ class ExpenseFilter(BaseModel):
     end_date: Optional[datetime] = None
 
 class ExpenseUpdate(BaseModel):
-    amount: float | None = None
-    category: str | None = None
-    description: str | None = None
+    amount: Optional[float] = None
+    category: Optional[str] = None
+    description: Optional[str] = None

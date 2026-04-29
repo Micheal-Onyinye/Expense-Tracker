@@ -82,7 +82,7 @@ def update_expense(
             detail="Expense not found"
         )
 
-    update_data = updated_data.dict(exclude_unset=True)
+    update_data = updated_data.model_dump(exclude_unset=True)
 
     for key, value in update_data.items():
             setattr(expense, key, value)
