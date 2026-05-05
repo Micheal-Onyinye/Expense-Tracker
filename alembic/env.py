@@ -1,7 +1,6 @@
 import os
 from logging.config import fileConfig
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import create_engine, pool
 from alembic import context
 
 # Import your models and metadata
@@ -11,30 +10,28 @@ from app.models import User, Expense, MonthlyReport
 # this is the Alembic Config object
 config = context.config
 
-# --- DATABASE URL CONFIGURATION ---
-# 1. Try to get the URL from environment variables (Render uses this)
-# 2. Fix the "postgres://" vs "postgresql://" prefix issue
-# 3. Fallback to the one in your app.database if env is missing
-db_url = os.environ.get("DATABASE_URL")
-if db_url:
-    if db_url.startswith("postgres://"):
-        db_url = db_url.replace("postgres://", "postgresql://", 1)
-    config.set_main_option("sqlalchemy.url", db_url)
-else:
-    # Fallback for local development
-    from app.database import DATABASE_URL
-    config.set_main_option("sqlalchemy.url", DATABASE_URL.replace("%", "%%"))
-# ----------------------------------
-
 # Interpret the config file for Python logging.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
 
+def get_url():
+    # 1. Try to get URL from Render environment
+    url = os.environ.get("DATABASE_URL")
+    if not url:
+        # 2. Fallback to your app's internal DATABASE_URL
+        from app.database import DATABASE_URL
+        url = DATABASE_URL
+    
+    # Fix the "postgres://" prefix if it exists
+    if url and url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql://", 1)
+    return url
+
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode."""
-    url = config.get_main_option("sqlalchemy.url")
+    url = get_url()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -47,13 +44,8 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
-    # This section ensures the engine uses the URL we set above
-    configuration = config.get_section(config.config_ini_section)
-    connectable = engine_from_config(
-        configuration,
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    # We create the engine directly using the URL to avoid the % interpolation error
+    connectable = create_engine(get_url(), poolclass=pool.NullPool)
 
     with connectable.connect() as connection:
         context.configure(
