@@ -1,6 +1,6 @@
 import os
 from logging.config import fileConfig
-from sqlalchemy import create_engine, pool, text
+from sqlalchemy import create_engine, pool
 from alembic import context
 
 # Import your models and metadata
@@ -23,28 +23,19 @@ def get_url():
     return url
 
 def run_migrations_online() -> None:
-    url = get_url()
-    connectable = create_engine(url, poolclass=pool.NullPool)
+    # We use create_engine directly to bypass configparser interpolation issues (%)
+    connectable = create_engine(get_url(), poolclass=pool.NullPool)
 
     with connectable.connect() as connection:
-        # --- THE MAGIC FIX ---
-        # This manually checks if the users table exists. 
-        # If it doesn't, it forces Alembic to start from zero.
-        result = connection.execute(text("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'users')"))
-        exists = result.scalar()
-        
-        if not exists:
-            print("--- USERS TABLE MISSING: FORCING MIGRATION ---")
-            connection.execute(text("DROP TABLE IF EXISTS alembic_version"))
-            connection.commit()
-        # ---------------------
+        context.configure(
+            connection=connection, 
+            target_metadata=target_metadata
+        )
 
-        context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
             context.run_migrations()
 
 if context.is_offline_mode():
-    # Simple version for offline
     context.configure(url=get_url(), target_metadata=target_metadata, literal_binds=True)
     with context.begin_transaction():
         context.run_migrations()
