@@ -43,7 +43,7 @@ async function login() {
 
     setToken(res.access_token);
 
-    window.location.href = "dashboard.html";
+    window.location.href = "index.html";
 
   } catch (err) {
     console.log("LOGIN ERROR:", err);
