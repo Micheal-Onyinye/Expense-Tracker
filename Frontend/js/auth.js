@@ -1,62 +1,64 @@
 
-console.log("Auth JS loaded");
+function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
+  if (!toast) return;
+  toast.innerText = message;
+  toast.className = `toast show ${type}`;
+  
+  setTimeout(() => {
+    toast.className = "toast";
+  }, 3000);
+}
 
 async function register() {
+  const email = document.getElementById("email").value;
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  if (!email || !username || !password) {
+    showToast("All fields are required", "error");
+    return;
+  }
+
   try {
-    console.log("register clicked");
-
-    if (!registerUser) {
-      throw new Error("registerUser not loaded");
-    }
-
-    const res = await registerUser({
-      email: document.getElementById("email").value,
-      username: document.getElementById("username").value,
-      password: document.getElementById("password").value
-    });
-
-    console.log(res);
-
-    alert("Account created successfully");
-
-    window.location.href = "login.html";
+    await registerUser({ email, username, password });
+    showToast("Account created! Redirecting...");
+    
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1500);
 
   } catch (err) {
-    console.log("ERROR:", err);
-    alert(err.message);
+    showToast(err.message, "error");
   }
 }
-
 
 async function login() {
-  console.log({
-  username: document.getElementById("username").value,
-  password: document.getElementById("password").value
-});
+  const usernameInput = document.getElementById("username");
+  const passwordInput = document.getElementById("password");
+
+  if (!usernameInput.value || !passwordInput.value) {
+    showToast("Username and password required", "error");
+    return;
+  }
+
   try {
     const res = await loginUser({
-      username: document.getElementById("username").value,
-      password: document.getElementById("password").value
+      username: usernameInput.value,
+      password: passwordInput.value
     });
 
-    console.log("LOGIN RESPONSE:", res);
-
     setToken(res.access_token);
+    showToast("Login successful!");
 
-    window.location.href = "index.html";
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 1000);
 
   } catch (err) {
-    console.log("LOGIN ERROR:", err);
-
-    alert(err.message || JSON.stringify(err));
+    showToast(err.message, "error");
   }
 }
-
-
-function getToken() {
-  return localStorage.getItem("token");
-}
-
 
 function logout() {
   localStorage.removeItem("token");

@@ -30,18 +30,6 @@ def create_expense(
 
 @router.get("/", response_model=list[ExpenseResponse])
 def get_expenses(
-    db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
-):
-
-    expenses = db.query(Expense).filter(
-        Expense.user_id == current_user.id
-    ).all()
-
-    return expenses
-
-@router.get("/", response_model=list[ExpenseResponse])
-def get_expense(
     filters: ExpenseFilter = Depends(),
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
@@ -50,6 +38,7 @@ def get_expense(
     query = db.query(Expense).filter(
         Expense.user_id == current_user.id
     )
+
     if filters.category:
         query = query.filter(Expense.category == filters.category)
 

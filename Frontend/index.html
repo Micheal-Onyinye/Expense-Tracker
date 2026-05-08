@@ -1,66 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Expense Dashboard</title>
-
+  <title>Expense Tracker | Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<div class="container">
+  <header class="header">
+    <div class="container">
+      <div class="header-brand">
+        <h2>Expense Tracker</h2>
+      </div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </header>
 
+  <main class="container">
+    
+    <!-- Hero Summary -->
+    <section class="summary-card">
+      <span>Current Total Expenses</span>
+      <h1 id="mainTotal">₦0.00</h1>
+    </section>
 
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-    <h2>Expense Dashboard</h2>
-    <button class="small-btn" onclick="logout()">Logout</button>
+    <div class="main-grid">
+      <!-- Add Expense Section -->
+      <section class="card-box">
+        <h3>Add New Expense</h3>
+        <div class="form-group">
+          <div>
+            <label for="amount">Amount</label>
+            <input id="amount" type="number" placeholder="0.00">
+          </div>
+          <div>
+            <label for="category">Category</label>
+            <input id="category" placeholder="e.g. Food, Rent, Transport">
+          </div>
+          <div>
+            <label for="description">Description</label>
+            <input id="description" placeholder="Optional notes">
+          </div>
+          <button class="btn-primary" onclick="handleAddExpense()">Add Expense</button>
+        </div>
+      </section>
+
+      <!-- Reports Section -->
+      <section class="card-box">
+        <h3>Quick Insights</h3>
+        <div class="form-group" style="flex-direction: row; gap: 0.5rem; margin-bottom: 1rem;">
+          <button class="btn-outline" style="flex: 1" onclick="loadDaily()">Daily Report</button>
+          <button class="btn-outline" style="flex: 1" onclick="loadMonthly()">Monthly Report</button>
+        </div>
+        <div id="reportDisplay" class="report-box hidden">
+          <!-- Report content injected here -->
+        </div>
+      </section>
+    </div>
+
+    <!-- Expenses List -->
+    <section class="card-box" style="margin-top: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3>Recent Transactions</h3>
+        <button class="btn-outline" style="padding: 0.5rem 1rem;" onclick="loadExpenses()">Refresh</button>
+      </div>
+      <div id="expenseList">
+        <!-- Expenses injected here -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeEditModal()">&times;</span>
+      <h3>Edit Transaction</h3>
+      <input id="editId" type="hidden">
+      <div class="form-group" style="margin-top: 1.5rem;">
+        <div>
+          <label>Amount</label>
+          <input id="editAmount" type="number">
+        </div>
+        <div>
+          <label>Category</label>
+          <input id="editCategory">
+        </div>
+        <div>
+          <label>Description</label>
+          <input id="editDescription">
+        </div>
+        <button class="btn-primary" onclick="handleUpdateExpense()">Save Changes</button>
+      </div>
+    </div>
   </div>
 
+  <!-- Notification Toast -->
+  <div id="toast" class="toast"></div>
 
-  <div class="card-box">
-    <h3>Add Expense</h3>
-
-    <input id="amount" type="number" placeholder="Amount">
-    <input id="category" placeholder="Category">
-    <input id="description" placeholder="Description">
-
-    <button onclick="handleAddExpense()">Add Expense</button>
-  </div>
-
- 
-  <div class="card-box">
-    <h3>My Expenses</h3>
-
-    <button onclick="loadExpenses()">Refresh</button>
-
-    <div id="expenseList"></div>
-  </div>
-
- 
-
-
-    <div class="card-box">
-      <h3>Reports</h3>
-
-      <button onclick="loadTotal()">Total Expense</button>
-      <div id="totalReport" class="report-box hidden"></div>
-
-      <button onclick="loadDaily()">Daily Summary</button>
-      <div id="dailyReport" class="report-box hidden"></div>
-
-      <button onclick="loadMonthly()">Monthly Reports</button>
-      <div id="monthlyReport" class="report-box hidden"></div>
-
-  </div>  
-
-
-
-</div>
-
-<script src="js/api.js"></script>
-<script src="js/dashboard.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
 
 </body>
 </html>
